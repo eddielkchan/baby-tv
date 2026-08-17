@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- PWA:加到主畫面後全螢幕、狀態列樣式、App 名 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="寶寶電視">
+<meta name="theme-color" content="#14203a">
+<title>寶寶電視</title>
+<style>
+  :root{
+    --bg:#14203a;          /* 夜空藍 */
+    --card:#1f3054;
+    --card-edge:#2c4270;
+    --text:#f2f5fa;
+    --text-dim:#93a5c4;
+    --sun:#ffd166;         /* 太陽黃 */
+    --sky:#6ec6ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"PingFang HK","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+    display:flex;flex-direction:column;
+    overscroll-behavior:none;
+  }
+
+  header{
+    display:flex;align-items:center;gap:10px;
+    padding:calc(10px + env(safe-area-inset-top)) 18px 10px;
+    flex-shrink:0;
+  }
+  header .logo{font-size:26px}
+  header h1{font-size:19px;font-weight:800;letter-spacing:.03em}
+  header .np{
+    margin-left:auto;
+    font-size:13px;color:var(--text-dim);
+    max-width:45%;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+
+  .stage{
+    flex-shrink:0;
+    padding:0 14px;
+  }
+  .frame-wrap{
+    width:100%;
+    max-width:900px;
+    margin:0 auto;
+    aspect-ratio:16/9;
+    background:#000;
+    border-radius:16px;
+    overflow:hidden;
+    position:relative;
+    box-shadow:0 10px 30px rgba(0,0,0,.45);
+  }
+  .frame-wrap iframe,#player{
+    position:absolute;inset:0;width:100%;height:100%;border:0;
+  }
+  .placeholder{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    color:var(--text-dim);font-size:15px;
+  }
+  .placeholder .tv{font-size:46px}
+
+  .grid-area{
+    flex:1;
+    overflow-y:auto;
+    padding:16px 14px calc(20px + env(safe-area-inset-bottom));
+  }
+  .grid{
+    max-width:900px;margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:12px;
+  }
+  .vbtn{
+    background:var(--card);
+    border:2px solid var(--card-edge);
+    border-radius:16px;
+    padding:0;
+    overflow:hidden;
+    cursor:pointer;
+    font-family:inherit;
+    color:var(--text);
+    text-align:center;
+    transition:transform .12s, border-color .15s;
+  }
+  .vbtn:active{transform:scale(.95)}
+  .vbtn:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+  .vbtn.active{border-color:var(--sun)}
+  .vbtn img{
+    display:block;width:100%;
+    aspect-ratio:16/9;object-fit:cover;
+    background:#000;
+  }
+  .vbtn .nm{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    padding:10px 8px;
+    font-size:15px;font-weight:700;
+    min-height:44px;
+  }
+  .vbtn.active .nm::before{content:"▶";color:var(--sun);font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo">📺</span>
+  <h1>寶寶電視</h1>
+  <span class="np" id="nowPlaying"></span>
+</header>
+
+<div class="stage">
+  <div class="frame-wrap">
+    <div id="player">
+      <div class="placeholder"><span class="tv">📺</span><span>㩒下面揀一條片</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-area">
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   片單:每條片一行,之後貼晒 10 條俾我就得
+   id = youtube.com/watch?v= 後面嗰串
+   ═══════════════════════════════════════════ */
+const VIDEOS = [
+  { name: "阿斯拉玩具開箱", id: "a3vHGrCZnuo" }
+  // { name: "第二條片", id: "xxxxxxxxxxx" },
+  // ...
+];
+/* ═══════════ 片單完 ═══════════ */
+
+let player = null;
+let currentIdx = -1;
+const grid = document.getElementById("grid");
+const np = document.getElementById("nowPlaying");
+const btns = [];
+
+/* 起格仔:用 YouTube 官方縮圖,唔使自己整圖 */
+VIDEOS.forEach((v, i) => {
+  const b = document.createElement("button");
+  b.className = "vbtn";
+  b.innerHTML =
+    '<img src="https://i.ytimg.com/vi/' + v.id + '/mqdefault.jpg" alt="" loading="lazy">' +
+    '<span class="nm">' + v.name + '</span>';
+  b.addEventListener("click", () => playIndex(i));
+  grid.appendChild(b);
+  btns.push(b);
+});
+
+/* 載入 YouTube IFrame API */
+const tag = document.createElement("script");
+tag.src = "https://www.youtube.com/iframe_api";
+document.head.appendChild(tag);
+
+let apiReady = false;
+let pendingIdx = null;
+
+function onYouTubeIframeAPIReady(){
+  apiReady = true;
+  if(pendingIdx !== null){ playIndex(pendingIdx); }
+}
+
+function playIndex(i){
+  if(!apiReady){ pendingIdx = i; return; }
+  currentIdx = i;
+  btns.forEach((b,k)=>b.classList.toggle("active", k===i));
+  np.textContent = VIDEOS[i].name;
+
+  if(player){
+    player.loadVideoById(VIDEOS[i].id);
+    return;
+  }
+  player = new YT.Player("player", {
+    videoId: VIDEOS[i].id,
+    playerVars: {
+      autoplay: 1,
+      rel: 0,            // 相關影片只限同一頻道
+      playsinline: 1,    // iOS 唔好彈全螢幕
+      modestbranding: 1
+    },
+    events: {
+      onStateChange: (e) => {
+        /* 核心:片一播完,即刻跳落片單下一條,
+           「相關影片」畫面冇機會出現 */
+        if(e.data === YT.PlayerState.ENDED){
+          playIndex((currentIdx + 1) % VIDEOS.length);
+        }
+      }
+    }
+  });
+}
+</script>
+
+</body>
+</html>
