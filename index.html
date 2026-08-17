@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<!-- PWA:加到主畫面後全螢幕、狀態列樣式、App 名 -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,22 +11,21 @@
 <title>寶寶電視</title>
 <style>
   :root{
-    --bg:#14203a;          /* 夜空藍 */
+    --bg:#14203a;
     --card:#1f3054;
     --card-edge:#2c4270;
     --text:#f2f5fa;
     --text-dim:#93a5c4;
-    --sun:#ffd166;         /* 太陽黃 */
-    --sky:#6ec6ff;
+    --sun:#ffd166;
+    --danger:#ff6b6b;
+    --ok:#51cf8a;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
   body{
-    background:var(--bg);
-    color:var(--text);
+    background:var(--bg);color:var(--text);
     font-family:"PingFang HK","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
-    display:flex;flex-direction:column;
-    overscroll-behavior:none;
+    display:flex;flex-direction:column;overscroll-behavior:none;
   }
 
   header{
@@ -35,33 +33,24 @@
     padding:calc(10px + env(safe-area-inset-top)) 18px 10px;
     flex-shrink:0;
   }
-  header .logo{font-size:26px}
-  header h1{font-size:19px;font-weight:800;letter-spacing:.03em}
-  header .np{
+  header .logo{font-size:26px;user-select:none;-webkit-user-select:none}
+  header h1{font-size:19px;font-weight:800}
+  header .timeleft{
     margin-left:auto;
     font-size:13px;color:var(--text-dim);
-    max-width:45%;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    background:var(--card);border:1px solid var(--card-edge);
+    border-radius:999px;padding:5px 12px;
   }
+  header .timeleft.warn{color:var(--sun)}
 
-  .stage{
-    flex-shrink:0;
-    padding:0 14px;
-  }
+  .stage{flex-shrink:0;padding:0 14px}
   .frame-wrap{
-    width:100%;
-    max-width:900px;
-    margin:0 auto;
-    aspect-ratio:16/9;
-    background:#000;
-    border-radius:16px;
-    overflow:hidden;
-    position:relative;
+    width:100%;max-width:900px;margin:0 auto;
+    aspect-ratio:16/9;background:#000;
+    border-radius:16px;overflow:hidden;position:relative;
     box-shadow:0 10px 30px rgba(0,0,0,.45);
   }
-  .frame-wrap iframe,#player{
-    position:absolute;inset:0;width:100%;height:100%;border:0;
-  }
+  .frame-wrap iframe,#player{position:absolute;inset:0;width:100%;height:100%;border:0}
   .placeholder{
     position:absolute;inset:0;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
@@ -69,52 +58,87 @@
   }
   .placeholder .tv{font-size:46px}
 
-  .grid-area{
-    flex:1;
-    overflow-y:auto;
-    padding:16px 14px calc(20px + env(safe-area-inset-bottom));
-  }
+  .grid-area{flex:1;overflow-y:auto;padding:16px 14px calc(20px + env(safe-area-inset-bottom))}
   .grid{
     max-width:900px;margin:0 auto;
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-    gap:12px;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;
   }
   .vbtn{
-    background:var(--card);
-    border:2px solid var(--card-edge);
-    border-radius:16px;
-    padding:0;
-    overflow:hidden;
-    cursor:pointer;
-    font-family:inherit;
-    color:var(--text);
-    text-align:center;
-    transition:transform .12s, border-color .15s;
+    background:var(--card);border:2px solid var(--card-edge);
+    border-radius:16px;padding:0;overflow:hidden;cursor:pointer;
+    font-family:inherit;color:var(--text);text-align:center;
+    transition:transform .12s,border-color .15s;
   }
   .vbtn:active{transform:scale(.95)}
   .vbtn:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
   .vbtn.active{border-color:var(--sun)}
-  .vbtn img{
-    display:block;width:100%;
-    aspect-ratio:16/9;object-fit:cover;
-    background:#000;
-  }
+  .vbtn img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#000}
   .vbtn .nm{
     display:flex;align-items:center;justify-content:center;gap:6px;
-    padding:10px 8px;
-    font-size:15px;font-weight:700;
-    min-height:44px;
+    padding:10px 8px;font-size:15px;font-weight:700;min-height:44px;
   }
   .vbtn.active .nm::before{content:"▶";color:var(--sun);font-size:12px}
+
+  /* ── 全屏遮罩(限時鎖 / 密碼 / 設定共用) ── */
+  .overlay{
+    position:fixed;inset:0;z-index:50;
+    background:rgba(10,16,30,.96);
+    display:none;
+    align-items:center;justify-content:center;
+    padding:20px;
+  }
+  .overlay.show{display:flex}
+  .sheet{
+    background:var(--card);border:1px solid var(--card-edge);
+    border-radius:20px;padding:26px;
+    width:100%;max-width:420px;
+    max-height:85vh;overflow-y:auto;
+  }
+  .sheet h2{font-size:20px;margin-bottom:16px}
+  .sheet .big-emoji{font-size:60px;text-align:center;display:block;margin-bottom:12px}
+  .sheet p{color:var(--text-dim);font-size:14px;line-height:1.6;margin-bottom:16px}
+  .sheet input[type=text],.sheet input[type=password],.sheet input[type=number]{
+    width:100%;
+    background:var(--bg);border:1px solid var(--card-edge);
+    border-radius:10px;padding:12px;
+    color:var(--text);font-size:16px;font-family:inherit;
+    margin-bottom:12px;
+  }
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--sun);color:#3a2c00;
+    border:0;border-radius:12px;
+    padding:12px 20px;font-size:15px;font-weight:700;font-family:inherit;
+    cursor:pointer;
+  }
+  .btn.ghost{background:transparent;color:var(--text-dim);border:1px solid var(--card-edge)}
+  .btn.danger{background:var(--danger);color:#fff}
+  .btn:active{transform:scale(.97)}
+  .btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+  .msg{font-size:13px;min-height:18px;margin-bottom:8px}
+  .msg.err{color:var(--danger)}
+  .msg.ok{color:var(--ok)}
+
+  /* 設定頁片單編輯 */
+  .vrow{display:flex;gap:8px;margin-bottom:8px}
+  .vrow input{margin-bottom:0!important}
+  .vrow input.vn{flex:1.2}
+  .vrow input.vi{flex:1;font-family:monospace}
+  .vrow .del{
+    flex-shrink:0;width:44px;
+    background:transparent;border:1px solid var(--card-edge);
+    border-radius:10px;color:var(--danger);font-size:18px;cursor:pointer;
+  }
+  .field-label{font-size:13px;color:var(--text-dim);margin:14px 0 6px;display:block}
+  .divider{border:0;border-top:1px solid var(--card-edge);margin:18px 0}
 </style>
 </head>
 <body>
 
 <header>
-  <span class="logo">📺</span>
+  <span class="logo" id="secretBtn">📺</span>
   <h1>寶寶電視</h1>
-  <span class="np" id="nowPlaying"></span>
+  <span class="timeleft" id="timeLeft"></span>
 </header>
 
 <div class="stage">
@@ -129,79 +153,267 @@
   <div class="grid" id="grid"></div>
 </div>
 
+<!-- 限時鎖畫面 -->
+<div class="overlay" id="lockOverlay">
+  <div class="sheet">
+    <span class="big-emoji">🌙</span>
+    <h2 style="text-align:center">今日睇完喇</h2>
+    <p style="text-align:center">今日嘅電視時間用晒喇,聽日再嚟啦!</p>
+    <div class="msg err" id="lockMsg"></div>
+    <input type="password" id="lockPw" placeholder="家長密碼" inputmode="numeric">
+    <div class="btn-row">
+      <button class="btn" id="lockUnlockBtn">加時 15 分鐘</button>
+    </div>
+  </div>
+</div>
+
+<!-- 密碼輸入(入設定頁) -->
+<div class="overlay" id="pwOverlay">
+  <div class="sheet">
+    <h2>家長密碼</h2>
+    <div class="msg err" id="pwMsg"></div>
+    <input type="password" id="pwInput" placeholder="輸入密碼" inputmode="numeric">
+    <div class="btn-row">
+      <button class="btn ghost" id="pwCancel">取消</button>
+      <button class="btn" id="pwOk">確定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 家長設定頁 -->
+<div class="overlay" id="setOverlay">
+  <div class="sheet">
+    <h2>⚙️ 家長設定</h2>
+
+    <span class="field-label">片單(名 + YouTube 影片 ID)</span>
+    <div id="vlist"></div>
+    <button class="btn ghost" id="addRow" style="width:100%">＋ 加一條片</button>
+
+    <hr class="divider">
+
+    <span class="field-label">每日限時(分鐘,0 = 冇限制)</span>
+    <input type="number" id="setLimit" min="0" max="600" inputmode="numeric">
+
+    <span class="field-label">今日已睇:<b id="usedToday"></b></span>
+    <button class="btn ghost" id="resetToday" style="width:100%">重設今日計時</button>
+
+    <hr class="divider">
+
+    <span class="field-label">更改密碼(留空 = 唔改)</span>
+    <input type="password" id="setPw" placeholder="新密碼" inputmode="numeric">
+
+    <div class="msg" id="setMsg"></div>
+    <div class="btn-row">
+      <button class="btn ghost" id="setCancel">閂咗佢</button>
+      <button class="btn" id="setSave">儲存</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ═══════════════════════════════════════════
-   片單:每條片一行,之後貼晒 10 條俾我就得
-   id = youtube.com/watch?v= 後面嗰串
+   預設片單:第一次用 / 未喺設定頁改過就用呢個。
+   之後喺 app 入面家長設定頁改,唔使掂呢度。
    ═══════════════════════════════════════════ */
-const VIDEOS = [
+const DEFAULT_VIDEOS = [
   { name: "阿斯拉玩具開箱", id: "a3vHGrCZnuo" },
   { name: "Miss Rachael", id: "hTqtGJwsJVE" }
-  // { name: "第二條片", id: "xxxxxxxxxxx" },
-  // ...
 ];
-/* ═══════════ 片單完 ═══════════ */
+const DEFAULT_LIMIT_MIN = 0;      // 0 = 冇限制
+const DEFAULT_PASSWORD  = "1234"; // 第一次用嘅密碼,入到設定頁記得改
+/* ═══════════════════════════════════════════ */
 
-let player = null;
-let currentIdx = -1;
-const grid = document.getElementById("grid");
-const np = document.getElementById("nowPlaying");
-const btns = [];
+/* ── 儲存(用瀏覽器 localStorage,每部裝置獨立) ── */
+const store = {
+  get(k, fb){ try{ const v = localStorage.getItem("btv_"+k); return v===null?fb:JSON.parse(v);}catch(e){return fb} },
+  set(k, v){ try{ localStorage.setItem("btv_"+k, JSON.stringify(v)); }catch(e){} }
+};
 
-/* 起格仔:用 YouTube 官方縮圖,唔使自己整圖 */
-VIDEOS.forEach((v, i) => {
-  const b = document.createElement("button");
-  b.className = "vbtn";
-  b.innerHTML =
-    '<img src="https://i.ytimg.com/vi/' + v.id + '/mqdefault.jpg" alt="" loading="lazy">' +
-    '<span class="nm">' + v.name + '</span>';
-  b.addEventListener("click", () => playIndex(i));
-  grid.appendChild(b);
-  btns.push(b);
-});
+let VIDEOS   = store.get("videos", DEFAULT_VIDEOS);
+let LIMITMIN = store.get("limit",  DEFAULT_LIMIT_MIN);
+let PASSWORD = store.get("pw",     DEFAULT_PASSWORD);
 
-/* 載入 YouTube IFrame API */
-const tag = document.createElement("script");
-tag.src = "https://www.youtube.com/iframe_api";
-document.head.appendChild(tag);
+/* 每日計時:key 係日期,換日自動歸零 */
+function todayKey(){ const d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+function getUsedSec(){ const rec = store.get("used", {}); return rec.day===todayKey() ? rec.sec : 0; }
+function setUsedSec(s){ store.set("used", {day:todayKey(), sec:s}); }
+let usedSec = getUsedSec();
+let bonusSec = store.get("bonus", {}).day===todayKey() ? store.get("bonus",{}).sec : 0;
+function setBonus(s){ store.set("bonus",{day:todayKey(),sec:s}); }
 
-let apiReady = false;
-let pendingIdx = null;
+/* ── 播放器 ── */
+let player=null, currentIdx=-1, apiReady=false, pendingIdx=null;
+const grid=document.getElementById("grid");
+let btns=[];
 
-function onYouTubeIframeAPIReady(){
-  apiReady = true;
-  if(pendingIdx !== null){ playIndex(pendingIdx); }
-}
-
-function playIndex(i){
-  if(!apiReady){ pendingIdx = i; return; }
-  currentIdx = i;
-  btns.forEach((b,k)=>b.classList.toggle("active", k===i));
-  np.textContent = VIDEOS[i].name;
-
-  if(player){
-    player.loadVideoById(VIDEOS[i].id);
-    return;
-  }
-  player = new YT.Player("player", {
-    videoId: VIDEOS[i].id,
-    playerVars: {
-      autoplay: 1,
-      rel: 0,            // 相關影片只限同一頻道
-      playsinline: 1,    // iOS 唔好彈全螢幕
-      modestbranding: 1
-    },
-    events: {
-      onStateChange: (e) => {
-        /* 核心:片一播完,即刻跳落片單下一條,
-           「相關影片」畫面冇機會出現 */
-        if(e.data === YT.PlayerState.ENDED){
-          playIndex((currentIdx + 1) % VIDEOS.length);
-        }
-      }
-    }
+function buildGrid(){
+  grid.innerHTML=""; btns=[];
+  VIDEOS.forEach((v,i)=>{
+    const b=document.createElement("button");
+    b.className="vbtn";
+    b.innerHTML='<img src="https://i.ytimg.com/vi/'+v.id+'/mqdefault.jpg" alt="" loading="lazy">'+
+                '<span class="nm">'+esc(v.name)+'</span>';
+    b.addEventListener("click",()=>playIndex(i));
+    grid.appendChild(b); btns.push(b);
   });
 }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+const tag=document.createElement("script");
+tag.src="https://www.youtube.com/iframe_api";
+document.head.appendChild(tag);
+function onYouTubeIframeAPIReady(){ apiReady=true; if(pendingIdx!==null) playIndex(pendingIdx); }
+
+function playIndex(i){
+  if(isLocked()){ showLock(); return; }
+  if(!apiReady){ pendingIdx=i; return; }
+  currentIdx=i;
+  btns.forEach((b,k)=>b.classList.toggle("active",k===i));
+  if(player){ player.loadVideoById(VIDEOS[i].id); return; }
+  player=new YT.Player("player",{
+    videoId:VIDEOS[i].id,
+    playerVars:{autoplay:1,rel:0,playsinline:1,modestbranding:1},
+    events:{ onStateChange:(e)=>{
+      if(e.data===YT.PlayerState.ENDED){ playIndex((currentIdx+1)%VIDEOS.length); }
+    }}
+  });
+}
+
+/* ── 限時計時:每 5 秒檢查一次,播緊先計時 ── */
+function isLocked(){
+  if(LIMITMIN<=0) return false;
+  return usedSec >= LIMITMIN*60 + bonusSec;
+}
+setInterval(()=>{
+  if(player && player.getPlayerState && player.getPlayerState()===YT.PlayerState.PLAYING){
+    usedSec+=5; setUsedSec(usedSec);
+    if(isLocked()){ player.pauseVideo(); showLock(); }
+  }
+  updateTimeLabel();
+},5000);
+
+const timeLeftEl=document.getElementById("timeLeft");
+function updateTimeLabel(){
+  if(LIMITMIN<=0){ timeLeftEl.textContent="⏱ 冇限時"; timeLeftEl.classList.remove("warn"); return; }
+  const left=Math.max(0, LIMITMIN*60+bonusSec-usedSec);
+  const m=Math.ceil(left/60);
+  timeLeftEl.textContent="⏱ 剩返 "+m+" 分鐘";
+  timeLeftEl.classList.toggle("warn", m<=5);
+}
+updateTimeLabel();
+
+/* ── 限時鎖畫面 ── */
+const lockOverlay=document.getElementById("lockOverlay");
+function showLock(){ lockOverlay.classList.add("show"); }
+document.getElementById("lockUnlockBtn").addEventListener("click",()=>{
+  const pw=document.getElementById("lockPw").value;
+  if(pw===PASSWORD){
+    bonusSec+=15*60; setBonus(bonusSec);
+    document.getElementById("lockPw").value="";
+    document.getElementById("lockMsg").textContent="";
+    lockOverlay.classList.remove("show");
+    updateTimeLabel();
+  }else{
+    document.getElementById("lockMsg").textContent="密碼唔啱";
+  }
+});
+
+/* ── 秘密入口:長按 📺 logo 3 秒 ── */
+const secretBtn=document.getElementById("secretBtn");
+let pressTimer=null;
+function startPress(e){ e.preventDefault(); pressTimer=setTimeout(openPw,3000); }
+function endPress(){ clearTimeout(pressTimer); }
+secretBtn.addEventListener("touchstart",startPress,{passive:false});
+secretBtn.addEventListener("touchend",endPress);
+secretBtn.addEventListener("mousedown",startPress);
+secretBtn.addEventListener("mouseup",endPress);
+secretBtn.addEventListener("mouseleave",endPress);
+
+/* ── 密碼 → 設定頁 ── */
+const pwOverlay=document.getElementById("pwOverlay");
+const setOverlay=document.getElementById("setOverlay");
+function openPw(){ pwOverlay.classList.add("show"); document.getElementById("pwInput").focus(); }
+document.getElementById("pwCancel").addEventListener("click",()=>{
+  pwOverlay.classList.remove("show");
+  document.getElementById("pwInput").value="";
+  document.getElementById("pwMsg").textContent="";
+});
+document.getElementById("pwOk").addEventListener("click",()=>{
+  if(document.getElementById("pwInput").value===PASSWORD){
+    pwOverlay.classList.remove("show");
+    document.getElementById("pwInput").value="";
+    document.getElementById("pwMsg").textContent="";
+    openSettings();
+  }else{
+    document.getElementById("pwMsg").textContent="密碼唔啱";
+  }
+});
+
+/* ── 設定頁 ── */
+const vlist=document.getElementById("vlist");
+function addVRow(name,id){
+  const row=document.createElement("div");
+  row.className="vrow";
+  row.innerHTML='<input type="text" class="vn" placeholder="名" value="'+esc(name||"")+'">'+
+                '<input type="text" class="vi" placeholder="影片 ID" value="'+esc(id||"")+'">'+
+                '<button class="del" title="刪除">✕</button>';
+  row.querySelector(".del").addEventListener("click",()=>row.remove());
+  vlist.appendChild(row);
+}
+document.getElementById("addRow").addEventListener("click",()=>addVRow("",""));
+
+function fmtSec(s){ return Math.floor(s/60)+" 分 "+(s%60)+" 秒"; }
+function openSettings(){
+  vlist.innerHTML="";
+  VIDEOS.forEach(v=>addVRow(v.name,v.id));
+  document.getElementById("setLimit").value=LIMITMIN;
+  document.getElementById("usedToday").textContent=fmtSec(usedSec);
+  document.getElementById("setPw").value="";
+  document.getElementById("setMsg").textContent="";
+  setOverlay.classList.add("show");
+}
+document.getElementById("setCancel").addEventListener("click",()=>setOverlay.classList.remove("show"));
+document.getElementById("resetToday").addEventListener("click",()=>{
+  usedSec=0; setUsedSec(0); bonusSec=0; setBonus(0);
+  document.getElementById("usedToday").textContent=fmtSec(0);
+  updateTimeLabel();
+  const m=document.getElementById("setMsg");
+  m.textContent="已重設今日計時 ✓"; m.className="msg ok";
+});
+document.getElementById("setSave").addEventListener("click",()=>{
+  const rows=vlist.querySelectorAll(".vrow");
+  const list=[];
+  let bad=false;
+  rows.forEach(r=>{
+    const n=r.querySelector(".vn").value.trim();
+    const rawId=r.querySelector(".vi").value.trim();
+    /* 容錯:成條 link 貼入嚟都幫佢抽 ID */
+    let id=rawId;
+    const m1=rawId.match(/[?&]v=([A-Za-z0-9_-]{11})/);
+    const m2=rawId.match(/youtu\.be\/([A-Za-z0-9_-]{11})/);
+    if(m1) id=m1[1]; else if(m2) id=m2[1];
+    if(!n && !id) return;           // 全空行,跳過
+    if(!n || !/^[A-Za-z0-9_-]{11}$/.test(id)){ bad=true; return; }
+    list.push({name:n,id:id});
+  });
+  const msg=document.getElementById("setMsg");
+  if(bad){ msg.textContent="有啲行填得唔啱:名唔可以空,ID 要係 11 個字(或貼成條 link)"; msg.className="msg err"; return; }
+  if(list.length===0){ msg.textContent="至少要有一條片"; msg.className="msg err"; return; }
+
+  VIDEOS=list; store.set("videos",VIDEOS);
+  LIMITMIN=Math.max(0,parseInt(document.getElementById("setLimit").value)||0);
+  store.set("limit",LIMITMIN);
+  const npw=document.getElementById("setPw").value.trim();
+  if(npw){ PASSWORD=npw; store.set("pw",PASSWORD); }
+
+  buildGrid(); updateTimeLabel();
+  msg.textContent="已儲存 ✓"; msg.className="msg ok";
+  setTimeout(()=>setOverlay.classList.remove("show"),700);
+});
+
+/* ── 開機 ── */
+buildGrid();
+if(isLocked()) showLock();
 </script>
 
 </body>
