@@ -42,6 +42,17 @@
     border-radius:999px;padding:5px 12px;
   }
   header .timeleft.warn{color:var(--sun)}
+  .gearbtn{
+    background:var(--card);border:1px solid var(--card-edge);
+    border-radius:50%;
+    width:38px;height:38px;
+    font-size:18px;line-height:1;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .gearbtn:active{transform:scale(.92)}
+  .gearbtn:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 
   .stage{flex-shrink:0;padding:0 14px}
   .frame-wrap{
@@ -159,9 +170,10 @@
 <body>
 
 <header>
-  <span class="logo" id="secretBtn">📺</span>
+  <span class="logo">📺</span>
   <h1>寶寶電視</h1>
   <span class="timeleft" id="timeLeft"></span>
+  <button class="gearbtn" id="gearBtn" title="家長設定">⚙️</button>
 </header>
 
 <div class="stage">
@@ -370,16 +382,8 @@ document.getElementById("lockUnlockBtn").addEventListener("click",()=>{
   }
 });
 
-/* ── 秘密入口:長按 📺 3 秒 ── */
-const secretBtn=document.getElementById("secretBtn");
-let pressTimer=null;
-function startPress(e){ e.preventDefault(); pressTimer=setTimeout(openPw,3000); }
-function endPress(){ clearTimeout(pressTimer); }
-secretBtn.addEventListener("touchstart",startPress,{passive:false});
-secretBtn.addEventListener("touchend",endPress);
-secretBtn.addEventListener("mousedown",startPress);
-secretBtn.addEventListener("mouseup",endPress);
-secretBtn.addEventListener("mouseleave",endPress);
+/* ── 設定入口:㩒 ⚙️ 掣 ── */
+document.getElementById("gearBtn").addEventListener("click",openPw);
 
 const pwOverlay=document.getElementById("pwOverlay");
 const setOverlay=document.getElementById("setOverlay");
