@@ -11,14 +11,9 @@
 <title>寶寶電視</title>
 <style>
   :root{
-    --bg:#14203a;
-    --card:#1f3054;
-    --card-edge:#2c4270;
-    --text:#f2f5fa;
-    --text-dim:#93a5c4;
-    --sun:#ffd166;
-    --danger:#ff6b6b;
-    --ok:#51cf8a;
+    --bg:#14203a; --card:#1f3054; --card-edge:#2c4270;
+    --text:#f2f5fa; --text-dim:#93a5c4;
+    --sun:#ffd166; --danger:#ff6b6b; --ok:#51cf8a;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
@@ -27,29 +22,23 @@
     font-family:"PingFang HK","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
     display:flex;flex-direction:column;overscroll-behavior:none;
   }
-
   header{
     display:flex;align-items:center;gap:10px;
-    padding:calc(10px + env(safe-area-inset-top)) 18px 10px;
-    flex-shrink:0;
+    padding:calc(10px + env(safe-area-inset-top)) 18px 10px;flex-shrink:0;
   }
   header .logo{font-size:26px;user-select:none;-webkit-user-select:none}
   header h1{font-size:19px;font-weight:800}
   header .timeleft{
-    margin-left:auto;
-    font-size:13px;color:var(--text-dim);
+    margin-left:auto;font-size:13px;color:var(--text-dim);
     background:var(--card);border:1px solid var(--card-edge);
     border-radius:999px;padding:5px 12px;
   }
   header .timeleft.warn{color:var(--sun)}
   .gearbtn{
     background:var(--card);border:1px solid var(--card-edge);
-    border-radius:50%;
-    width:38px;height:38px;
-    font-size:18px;line-height:1;
-    cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;
+    border-radius:50%;width:38px;height:38px;
+    font-size:18px;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
   }
   .gearbtn:active{transform:scale(.92)}
   .gearbtn:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
@@ -69,24 +58,18 @@
   }
   .placeholder .tv{font-size:46px}
 
-  /* ── 電視台 tabs ── */
   .cats{
-    flex-shrink:0;
-    display:flex;gap:10px;
-    padding:14px 14px 2px;
-    overflow-x:auto;
+    flex-shrink:0;display:flex;gap:10px;
+    padding:14px 14px 2px;overflow-x:auto;
     -webkit-overflow-scrolling:touch;
     max-width:928px;margin:0 auto;width:100%;
   }
   .cats::-webkit-scrollbar{display:none}
   .cat{
-    flex-shrink:0;
-    background:var(--card);border:2px solid var(--card-edge);
-    border-radius:999px;
-    padding:10px 18px;
+    flex-shrink:0;background:var(--card);border:2px solid var(--card-edge);
+    border-radius:999px;padding:10px 18px;
     font-size:16px;font-weight:800;font-family:inherit;
-    color:var(--text-dim);
-    cursor:pointer;
+    color:var(--text-dim);cursor:pointer;
     transition:transform .12s,border-color .15s,color .15s;
   }
   .cat:active{transform:scale(.95)}
@@ -126,25 +109,23 @@
   .sheet{
     background:var(--card);border:1px solid var(--card-edge);
     border-radius:20px;padding:26px;
-    width:100%;max-width:460px;
-    max-height:85vh;overflow-y:auto;
+    width:100%;max-width:480px;max-height:85vh;overflow-y:auto;
   }
   .sheet h2{font-size:20px;margin-bottom:16px}
+  .sheet h3{font-size:15px;margin:0 0 10px}
   .sheet .big-emoji{font-size:60px;text-align:center;display:block;margin-bottom:12px}
   .sheet p{color:var(--text-dim);font-size:14px;line-height:1.6;margin-bottom:16px}
-  .sheet input[type=text],.sheet input[type=password],.sheet input[type=number]{
-    width:100%;
-    background:var(--bg);border:1px solid var(--card-edge);
-    border-radius:10px;padding:12px;
-    color:var(--text);font-size:16px;font-family:inherit;
-    margin-bottom:12px;
+  .sheet input[type=text],.sheet input[type=password],.sheet input[type=number],
+  .sheet input[type=time],.sheet textarea{
+    width:100%;background:var(--bg);border:1px solid var(--card-edge);
+    border-radius:10px;padding:12px;color:var(--text);
+    font-size:16px;font-family:inherit;margin-bottom:12px;
   }
+  .sheet textarea{font-family:monospace;font-size:12px;min-height:70px;resize:vertical}
   .btn{
     display:inline-flex;align-items:center;justify-content:center;
-    background:var(--sun);color:#3a2c00;
-    border:0;border-radius:12px;
-    padding:12px 20px;font-size:15px;font-weight:700;font-family:inherit;
-    cursor:pointer;
+    background:var(--sun);color:#3a2c00;border:0;border-radius:12px;
+    padding:12px 20px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;
   }
   .btn.ghost{background:transparent;color:var(--text-dim);border:1px solid var(--card-edge)}
   .btn:active{transform:scale(.97)}
@@ -159,12 +140,20 @@
   .vrow input.vn{flex:1;min-width:100px}
   .vrow input.vi{flex:1;min-width:110px;font-family:monospace}
   .vrow .del{
-    flex-shrink:0;width:44px;
-    background:transparent;border:1px solid var(--card-edge);
-    border-radius:10px;color:var(--danger);font-size:18px;cursor:pointer;
+    flex-shrink:0;width:44px;background:transparent;
+    border:1px solid var(--card-edge);border-radius:10px;
+    color:var(--danger);font-size:18px;cursor:pointer;
   }
   .field-label{font-size:13px;color:var(--text-dim);margin:14px 0 6px;display:block}
   .divider{border:0;border-top:1px solid var(--card-edge);margin:18px 0}
+  .inline2{display:flex;gap:10px}
+  .inline2>div{flex:1}
+  .chk{display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:8px;cursor:pointer}
+  .chk input{width:20px;height:20px;accent-color:var(--sun)}
+  .statrow{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);padding:4px 0}
+  .statrow b{color:var(--text)}
+  .statbar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin:2px 0 8px}
+  .statbar>div{height:100%;background:var(--sun)}
 </style>
 </head>
 <body>
@@ -204,10 +193,24 @@
   </div>
 </div>
 
-<!-- 密碼 -->
+<!-- 瞓覺時段鎖 -->
+<div class="overlay" id="bedOverlay">
+  <div class="sheet">
+    <span class="big-emoji">😴</span>
+    <h2 style="text-align:center">瞓覺時間喇</h2>
+    <p style="text-align:center">而家係休息時間,聽日先再睇啦!</p>
+    <div class="msg err" id="bedMsg"></div>
+    <input type="password" id="bedPw" placeholder="家長密碼" inputmode="numeric">
+    <div class="btn-row">
+      <button class="btn" id="bedUnlockBtn">暫時解鎖 15 分鐘</button>
+    </div>
+  </div>
+</div>
+
+<!-- 密碼(通用) -->
 <div class="overlay" id="pwOverlay">
   <div class="sheet">
-    <h2>家長密碼</h2>
+    <h2 id="pwTitle">家長密碼</h2>
     <div class="msg err" id="pwMsg"></div>
     <input type="password" id="pwInput" placeholder="輸入密碼" inputmode="numeric">
     <div class="btn-row">
@@ -225,17 +228,51 @@
     <span class="field-label">片單(台 + 名 + YouTube 影片 ID,ID 嗰格貼成條 link 都得)</span>
     <div id="vlist"></div>
     <button class="btn ghost" id="addRow" style="width:100%">＋ 加一條片</button>
-    <p style="margin-top:8px;font-size:12px">💡 「台」一欄打同一個名就會自動歸做同一個台,例:📚 教育台、🎵 兒歌台。可以加 emoji。</p>
+    <p style="margin-top:8px;font-size:12px">💡 「台」打同一個名自動歸同一個台,可加 emoji。</p>
 
     <hr class="divider">
 
-    <span class="field-label">每日限時(分鐘,0 = 冇限制)</span>
-    <input type="number" id="setLimit" min="0" max="600" inputmode="numeric">
-
+    <h3>⏱ 每日限時(分鐘,0 = 冇限制)</h3>
+    <div class="inline2">
+      <div><span class="field-label">平日(一至五)</span><input type="number" id="setLimitWd" min="0" max="600" inputmode="numeric"></div>
+      <div><span class="field-label">週末(六、日)</span><input type="number" id="setLimitWe" min="0" max="600" inputmode="numeric"></div>
+    </div>
     <span class="field-label">今日已睇:<b id="usedToday"></b></span>
     <button class="btn ghost" id="resetToday" style="width:100%">重設今日計時</button>
 
     <hr class="divider">
+
+    <h3>😴 瞓覺時段鎖</h3>
+    <label class="chk"><input type="checkbox" id="bedOn"> 啟用</label>
+    <div class="inline2">
+      <div><span class="field-label">由</span><input type="time" id="bedStart" value="20:00"></div>
+      <div><span class="field-label">至</span><input type="time" id="bedEnd" value="07:00"></div>
+    </div>
+
+    <hr class="divider">
+
+    <h3>🔒 要密碼先開到嘅台</h3>
+    <div id="lockCatList"><p style="margin:0;font-size:13px">(儲存片單後先會顯示新台)</p></div>
+
+    <hr class="divider">
+
+    <h3>📊 觀看統計</h3>
+    <span class="field-label">過去 7 日</span>
+    <div id="statDays"></div>
+    <span class="field-label">最多睇嘅片(累計)</span>
+    <div id="statVids"></div>
+
+    <hr class="divider">
+
+    <h3>💾 備份 / 同步</h3>
+    <p style="margin-bottom:8px;font-size:13px">「匯出」產生一段同步碼,喺另一部裝置貼上「匯入」,片單同設定即刻搬過去。</p>
+    <button class="btn ghost" id="exportBtn" style="width:100%">匯出同步碼</button>
+    <textarea id="syncCode" placeholder="同步碼會喺度顯示 / 或者貼入嚟匯入"></textarea>
+    <button class="btn ghost" id="importBtn" style="width:100%">匯入同步碼</button>
+
+    <hr class="divider">
+
+    <label class="chk"><input type="checkbox" id="sndOn"> 🔊 按鍵音效</label>
 
     <span class="field-label">更改密碼(留空 = 唔改)</span>
     <input type="password" id="setPw" placeholder="新密碼" inputmode="numeric">
@@ -250,15 +287,13 @@
 
 <script>
 /* ═══════════════════════════════════════════
-   預設片單:cat = 電視台名,同名自動歸一個台。
-   之後喺 app 家長設定頁改,唔使掂呢度。
+   預設值:第一次用先讀呢度,之後以設定頁為準
    ═══════════════════════════════════════════ */
 const DEFAULT_VIDEOS = [
   { cat: "🎨 節目台", name: "阿斯拉玩具開箱", id: "a3vHGrCZnuo" },
   { cat: "📚 教育台", name: "Miss Rachael", id: "hTqtGJwsJVE" }
 ];
-const DEFAULT_LIMIT_MIN = 0;
-const DEFAULT_PASSWORD  = "1234";
+const DEFAULT_PASSWORD = "1234";
 /* ═══════════════════════════════════════════ */
 
 const store = {
@@ -267,8 +302,20 @@ const store = {
 };
 
 let VIDEOS   = store.get("videos", DEFAULT_VIDEOS).map(v=>({cat:v.cat||"📺 節目台",name:v.name,id:v.id}));
-let LIMITMIN = store.get("limit",  DEFAULT_LIMIT_MIN);
-let PASSWORD = store.get("pw",     DEFAULT_PASSWORD);
+let PASSWORD = store.get("pw", DEFAULT_PASSWORD);
+/* 限時:兼容舊版單一 limit */
+const oldLimit = store.get("limit", null);
+let LIMIT_WD = store.get("limitWd", oldLimit!==null?oldLimit:0);
+let LIMIT_WE = store.get("limitWe", oldLimit!==null?oldLimit:0);
+/* 瞓覺時段 */
+let BED = store.get("bed", {on:false,start:"20:00",end:"07:00"});
+/* 鎖台 */
+let LOCKED_CATS = store.get("lockedCats", []);
+/* 音效 */
+let SND = store.get("snd", true);
+
+function isWeekend(){ const d=new Date().getDay(); return d===0||d===6; }
+function limitToday(){ return isWeekend()?LIMIT_WE:LIMIT_WD; }
 
 function todayKey(){ const d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
 function getUsedSec(){ const rec = store.get("used", {}); return rec.day===todayKey() ? rec.sec : 0; }
@@ -276,29 +323,69 @@ function setUsedSec(s){ store.set("used", {day:todayKey(), sec:s}); }
 let usedSec = getUsedSec();
 let bonusSec = store.get("bonus", {}).day===todayKey() ? store.get("bonus",{}).sec : 0;
 function setBonus(s){ store.set("bonus",{day:todayKey(),sec:s}); }
+/* 瞓覺暫時解鎖(到某個時間戳為止) */
+let bedOverrideUntil = store.get("bedOv", 0);
 
-/* ── 電視台 ── */
-let currentCat = null;          // 而家揀咗邊個台
-let player=null, apiReady=false, pendingIdx=null;
-let currentIdx=-1;              // 喺「當前台片單」入面嘅位置
+/* ── 統計 ── */
+let STAT_DAYS = store.get("statDays", {});   // {"2026-8-25": sec}
+let STAT_VIDS = store.get("statVids", {});   // {videoId: sec}
+function trimStats(){
+  const keys=Object.keys(STAT_DAYS);
+  if(keys.length>14){
+    keys.sort();
+    while(keys.length>14){ delete STAT_DAYS[keys.shift()]; }
+  }
+}
+
+/* ── 音效 ── */
+let audioCtx=null;
+function blip(){
+  if(!SND) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==="suspended") audioCtx.resume();
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.type="sine"; o.frequency.value=660;
+    g.gain.setValueAtTime(0.12,audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.12);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime+0.13);
+  }catch(e){}
+}
+
+/* ── 電視台 / 播放 ── */
+let currentCat=null;
+let unlockedCats=new Set();   // 今次開 app 期間解鎖咗嘅台(重開會再鎖)
+let player=null, apiReady=false, pendingIdx=null, currentIdx=-1;
 const catsEl=document.getElementById("cats");
 const grid=document.getElementById("grid");
 let btns=[];
 
 function catList(){ return [...new Set(VIDEOS.map(v=>v.cat))]; }
 function catVideos(){ return VIDEOS.filter(v=>v.cat===currentCat); }
+function isCatLocked(c){ return LOCKED_CATS.includes(c) && !unlockedCats.has(c); }
 
 function buildCats(){
   const cats=catList();
-  if(!cats.includes(currentCat)) currentCat=cats[0];
+  if(!cats.includes(currentCat) || isCatLocked(currentCat)){
+    currentCat = cats.find(c=>!isCatLocked(c)) || null;
+  }
   catsEl.innerHTML="";
-  /* 得一個台就唔使顯示 tabs,慳位 */
   catsEl.style.display = cats.length>1 ? "flex" : "none";
   cats.forEach(c=>{
     const b=document.createElement("button");
     b.className="cat"+(c===currentCat?" active":"");
-    b.textContent=c;
+    b.textContent=(LOCKED_CATS.includes(c)?"🔒 ":"")+c;
     b.addEventListener("click",()=>{
+      blip();
+      if(isCatLocked(c)){
+        openPw("解鎖「"+c+"」",()=>{
+          unlockedCats.add(c);
+          currentCat=c; currentIdx=-1;
+          buildCats(); buildGrid();
+        });
+        return;
+      }
       currentCat=c; currentIdx=-1;
       buildCats(); buildGrid();
     });
@@ -308,12 +395,13 @@ function buildCats(){
 
 function buildGrid(){
   grid.innerHTML=""; btns=[];
+  if(!currentCat) return;
   catVideos().forEach((v,i)=>{
     const b=document.createElement("button");
     b.className="vbtn"+(i===currentIdx?" active":"");
     b.innerHTML='<img src="https://i.ytimg.com/vi/'+v.id+'/mqdefault.jpg" alt="" loading="lazy">'+
                 '<span class="nm">'+esc(v.name)+'</span>';
-    b.addEventListener("click",()=>playIndex(i));
+    b.addEventListener("click",()=>{ blip(); playIndex(i); });
     grid.appendChild(b); btns.push(b);
   });
 }
@@ -325,6 +413,7 @@ document.head.appendChild(tag);
 function onYouTubeIframeAPIReady(){ apiReady=true; if(pendingIdx!==null) playIndex(pendingIdx); }
 
 function playIndex(i){
+  if(inBedtime()){ showBed(); return; }
   if(isLocked()){ showLock(); return; }
   if(!apiReady){ pendingIdx=i; return; }
   const list=catVideos();
@@ -336,7 +425,6 @@ function playIndex(i){
     videoId:list[i].id,
     playerVars:{autoplay:1,rel:0,playsinline:1,modestbranding:1},
     events:{ onStateChange:(e)=>{
-      /* 播完 → 同一個台入面跳下一條,循環 */
       if(e.data===YT.PlayerState.ENDED){
         playIndex((currentIdx+1)%catVideos().length);
       }
@@ -344,34 +432,58 @@ function playIndex(i){
   });
 }
 
-/* ── 限時 ── */
+/* ── 鎖判斷 ── */
 function isLocked(){
-  if(LIMITMIN<=0) return false;
-  return usedSec >= LIMITMIN*60 + bonusSec;
+  const lim=limitToday();
+  if(lim<=0) return false;
+  return usedSec >= lim*60 + bonusSec;
 }
+function inBedtime(){
+  if(!BED.on) return false;
+  if(Date.now() < bedOverrideUntil) return false;
+  const now=new Date();
+  const cur=now.getHours()*60+now.getMinutes();
+  const [sh,sm]=BED.start.split(":").map(Number);
+  const [eh,em]=BED.end.split(":").map(Number);
+  const s=sh*60+sm, e=eh*60+em;
+  if(s===e) return false;
+  return s<e ? (cur>=s && cur<e) : (cur>=s || cur<e);  // 跨午夜
+}
+
+/* ── 每 5 秒:計時 + 統計 + 檢查鎖 ── */
 setInterval(()=>{
   if(player && player.getPlayerState && player.getPlayerState()===YT.PlayerState.PLAYING){
     usedSec+=5; setUsedSec(usedSec);
-    if(isLocked()){ player.pauseVideo(); showLock(); }
+    const tk=todayKey();
+    STAT_DAYS[tk]=(STAT_DAYS[tk]||0)+5;
+    const list=catVideos();
+    if(list[currentIdx]){ STAT_VIDS[list[currentIdx].id]=(STAT_VIDS[list[currentIdx].id]||0)+5; }
+    trimStats();
+    store.set("statDays",STAT_DAYS); store.set("statVids",STAT_VIDS);
+
+    if(inBedtime()){ player.pauseVideo(); showBed(); }
+    else if(isLocked()){ player.pauseVideo(); showLock(); }
   }
   updateTimeLabel();
 },5000);
 
 const timeLeftEl=document.getElementById("timeLeft");
 function updateTimeLabel(){
-  if(LIMITMIN<=0){ timeLeftEl.textContent="⏱ 冇限時"; timeLeftEl.classList.remove("warn"); return; }
-  const left=Math.max(0, LIMITMIN*60+bonusSec-usedSec);
+  if(inBedtime()){ timeLeftEl.textContent="😴 休息時間"; timeLeftEl.classList.add("warn"); return; }
+  const lim=limitToday();
+  if(lim<=0){ timeLeftEl.textContent="⏱ 冇限時"; timeLeftEl.classList.remove("warn"); return; }
+  const left=Math.max(0, lim*60+bonusSec-usedSec);
   const m=Math.ceil(left/60);
   timeLeftEl.textContent="⏱ 剩返 "+m+" 分鐘";
   timeLeftEl.classList.toggle("warn", m<=5);
 }
 updateTimeLabel();
 
+/* ── 限時鎖畫面 ── */
 const lockOverlay=document.getElementById("lockOverlay");
 function showLock(){ lockOverlay.classList.add("show"); }
 document.getElementById("lockUnlockBtn").addEventListener("click",()=>{
-  const pw=document.getElementById("lockPw").value;
-  if(pw===PASSWORD){
+  if(document.getElementById("lockPw").value===PASSWORD){
     bonusSec+=15*60; setBonus(bonusSec);
     document.getElementById("lockPw").value="";
     document.getElementById("lockMsg").textContent="";
@@ -382,27 +494,50 @@ document.getElementById("lockUnlockBtn").addEventListener("click",()=>{
   }
 });
 
-/* ── 設定入口:㩒 ⚙️ 掣 ── */
-document.getElementById("gearBtn").addEventListener("click",openPw);
+/* ── 瞓覺鎖畫面 ── */
+const bedOverlay=document.getElementById("bedOverlay");
+function showBed(){ bedOverlay.classList.add("show"); }
+document.getElementById("bedUnlockBtn").addEventListener("click",()=>{
+  if(document.getElementById("bedPw").value===PASSWORD){
+    bedOverrideUntil=Date.now()+15*60*1000;
+    store.set("bedOv",bedOverrideUntil);
+    document.getElementById("bedPw").value="";
+    document.getElementById("bedMsg").textContent="";
+    bedOverlay.classList.remove("show");
+    updateTimeLabel();
+  }else{
+    document.getElementById("bedMsg").textContent="密碼唔啱";
+  }
+});
 
+/* ── 通用密碼框 ── */
 const pwOverlay=document.getElementById("pwOverlay");
-const setOverlay=document.getElementById("setOverlay");
-function openPw(){ pwOverlay.classList.add("show"); document.getElementById("pwInput").focus(); }
+let pwCallback=null;
+function openPw(title,cb){
+  document.getElementById("pwTitle").textContent=title||"家長密碼";
+  pwCallback=cb;
+  pwOverlay.classList.add("show");
+  document.getElementById("pwInput").focus();
+}
 document.getElementById("pwCancel").addEventListener("click",()=>{
   pwOverlay.classList.remove("show");
   document.getElementById("pwInput").value="";
   document.getElementById("pwMsg").textContent="";
+  pwCallback=null;
 });
 document.getElementById("pwOk").addEventListener("click",()=>{
   if(document.getElementById("pwInput").value===PASSWORD){
     pwOverlay.classList.remove("show");
     document.getElementById("pwInput").value="";
     document.getElementById("pwMsg").textContent="";
-    openSettings();
+    const cb=pwCallback; pwCallback=null;
+    if(cb) cb();
   }else{
     document.getElementById("pwMsg").textContent="密碼唔啱";
   }
 });
+
+document.getElementById("gearBtn").addEventListener("click",()=>{ blip(); openPw("家長密碼",openSettings); });
 
 /* ── 設定頁 ── */
 const vlist=document.getElementById("vlist");
@@ -417,23 +552,76 @@ function addVRow(cat,name,id){
   vlist.appendChild(row);
 }
 document.getElementById("addRow").addEventListener("click",()=>{
-  /* 新行預填最後一行嘅台名,加同台嘅片快好多 */
   const rows=vlist.querySelectorAll(".vrow");
   const lastCat=rows.length?rows[rows.length-1].querySelector(".vc").value:"";
   addVRow(lastCat,"","");
 });
 
 function fmtSec(s){ return Math.floor(s/60)+" 分 "+(s%60)+" 秒"; }
+function fmtMin(s){ return Math.round(s/60)+" 分鐘"; }
+
+function renderLockCats(){
+  const box=document.getElementById("lockCatList");
+  box.innerHTML="";
+  catList().forEach(c=>{
+    const lb=document.createElement("label");
+    lb.className="chk";
+    lb.innerHTML='<input type="checkbox" value="'+esc(c)+'"'+(LOCKED_CATS.includes(c)?" checked":"")+'> '+esc(c);
+    box.appendChild(lb);
+  });
+  if(!catList().length) box.innerHTML='<p style="margin:0;font-size:13px">未有台</p>';
+}
+
+function renderStats(){
+  /* 過去 7 日 */
+  const daysBox=document.getElementById("statDays");
+  daysBox.innerHTML="";
+  const days=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const k=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+    days.push({label:(d.getMonth()+1)+"/"+d.getDate(), sec:STAT_DAYS[k]||0});
+  }
+  const max=Math.max(60,...days.map(d=>d.sec));
+  days.forEach(d=>{
+    const row=document.createElement("div");
+    row.innerHTML='<div class="statrow"><span>'+d.label+'</span><b>'+fmtMin(d.sec)+'</b></div>'+
+                  '<div class="statbar"><div style="width:'+Math.round(d.sec/max*100)+'%"></div></div>';
+    daysBox.appendChild(row);
+  });
+  /* 最多睇嘅片 top 5 */
+  const vidsBox=document.getElementById("statVids");
+  vidsBox.innerHTML="";
+  const top=Object.entries(STAT_VIDS).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if(!top.length){ vidsBox.innerHTML='<p style="margin:0;font-size:13px">未有記錄</p>'; return; }
+  top.forEach(([vid,sec])=>{
+    const v=VIDEOS.find(x=>x.id===vid);
+    const row=document.createElement("div");
+    row.className="statrow";
+    row.innerHTML='<span>'+esc(v?v.name:vid)+'</span><b>'+fmtMin(sec)+'</b>';
+    vidsBox.appendChild(row);
+  });
+}
+
 function openSettings(){
   vlist.innerHTML="";
   VIDEOS.forEach(v=>addVRow(v.cat,v.name,v.id));
-  document.getElementById("setLimit").value=LIMITMIN;
+  document.getElementById("setLimitWd").value=LIMIT_WD;
+  document.getElementById("setLimitWe").value=LIMIT_WE;
   document.getElementById("usedToday").textContent=fmtSec(usedSec);
+  document.getElementById("bedOn").checked=BED.on;
+  document.getElementById("bedStart").value=BED.start;
+  document.getElementById("bedEnd").value=BED.end;
+  document.getElementById("sndOn").checked=SND;
   document.getElementById("setPw").value="";
+  document.getElementById("syncCode").value="";
   document.getElementById("setMsg").textContent="";
-  setOverlay.classList.add("show");
+  renderLockCats();
+  renderStats();
+  document.getElementById("setOverlay").classList.add("show");
 }
-document.getElementById("setCancel").addEventListener("click",()=>setOverlay.classList.remove("show"));
+document.getElementById("setCancel").addEventListener("click",()=>document.getElementById("setOverlay").classList.remove("show"));
+
 document.getElementById("resetToday").addEventListener("click",()=>{
   usedSec=0; setUsedSec(0); bonusSec=0; setBonus(0);
   document.getElementById("usedToday").textContent=fmtSec(0);
@@ -441,10 +629,47 @@ document.getElementById("resetToday").addEventListener("click",()=>{
   const m=document.getElementById("setMsg");
   m.textContent="已重設今日計時 ✓"; m.className="msg ok";
 });
+
+/* ── 備份 / 同步 ── */
+function exportCode(){
+  const data={v:1,videos:VIDEOS,limitWd:LIMIT_WD,limitWe:LIMIT_WE,bed:BED,lockedCats:LOCKED_CATS,snd:SND,pw:PASSWORD};
+  return "BTV1."+btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+}
+document.getElementById("exportBtn").addEventListener("click",()=>{
+  const ta=document.getElementById("syncCode");
+  ta.value=exportCode();
+  ta.select();
+  try{ document.execCommand("copy"); }catch(e){}
+  const m=document.getElementById("setMsg");
+  m.textContent="同步碼已產生(已嘗試複製到剪貼簿)✓"; m.className="msg ok";
+});
+document.getElementById("importBtn").addEventListener("click",()=>{
+  const m=document.getElementById("setMsg");
+  const raw=document.getElementById("syncCode").value.trim();
+  if(!raw.startsWith("BTV1.")){ m.textContent="同步碼格式唔啱"; m.className="msg err"; return; }
+  try{
+    const data=JSON.parse(decodeURIComponent(escape(atob(raw.slice(5)))));
+    if(!Array.isArray(data.videos)||!data.videos.length) throw 0;
+    VIDEOS=data.videos.map(v=>({cat:v.cat||"📺 節目台",name:String(v.name),id:String(v.id)}));
+    LIMIT_WD=data.limitWd||0; LIMIT_WE=data.limitWe||0;
+    BED=data.bed&&typeof data.bed==="object"?data.bed:BED;
+    LOCKED_CATS=Array.isArray(data.lockedCats)?data.lockedCats:[];
+    SND=data.snd!==false;
+    if(data.pw) PASSWORD=String(data.pw);
+    store.set("videos",VIDEOS); store.set("limitWd",LIMIT_WD); store.set("limitWe",LIMIT_WE);
+    store.set("bed",BED); store.set("lockedCats",LOCKED_CATS); store.set("snd",SND); store.set("pw",PASSWORD);
+    buildCats(); buildGrid(); updateTimeLabel();
+    openSettings();
+    document.getElementById("setMsg").textContent="匯入成功 ✓"; document.getElementById("setMsg").className="msg ok";
+  }catch(e){
+    m.textContent="同步碼解讀失敗,請檢查有冇貼漏"; m.className="msg err";
+  }
+});
+
+/* ── 儲存 ── */
 document.getElementById("setSave").addEventListener("click",()=>{
   const rows=vlist.querySelectorAll(".vrow");
-  const list=[];
-  let bad=false;
+  const list=[]; let bad=false;
   rows.forEach(r=>{
     const c=r.querySelector(".vc").value.trim()||"📺 節目台";
     const n=r.querySelector(".vn").value.trim();
@@ -462,20 +687,38 @@ document.getElementById("setSave").addEventListener("click",()=>{
   if(list.length===0){ msg.textContent="至少要有一條片"; msg.className="msg err"; return; }
 
   VIDEOS=list; store.set("videos",VIDEOS);
-  LIMITMIN=Math.max(0,parseInt(document.getElementById("setLimit").value)||0);
-  store.set("limit",LIMITMIN);
+  LIMIT_WD=Math.max(0,parseInt(document.getElementById("setLimitWd").value)||0);
+  LIMIT_WE=Math.max(0,parseInt(document.getElementById("setLimitWe").value)||0);
+  store.set("limitWd",LIMIT_WD); store.set("limitWe",LIMIT_WE);
+
+  BED={
+    on:document.getElementById("bedOn").checked,
+    start:document.getElementById("bedStart").value||"20:00",
+    end:document.getElementById("bedEnd").value||"07:00"
+  };
+  store.set("bed",BED);
+
+  LOCKED_CATS=[...document.querySelectorAll("#lockCatList input:checked")].map(i=>i.value)
+              .filter(c=>list.some(v=>v.cat===c));
+  store.set("lockedCats",LOCKED_CATS);
+
+  SND=document.getElementById("sndOn").checked;
+  store.set("snd",SND);
+
   const npw=document.getElementById("setPw").value.trim();
   if(npw){ PASSWORD=npw; store.set("pw",PASSWORD); }
 
+  unlockedCats.clear();
   buildCats(); buildGrid(); updateTimeLabel();
   msg.textContent="已儲存 ✓"; msg.className="msg ok";
-  setTimeout(()=>setOverlay.classList.remove("show"),700);
+  setTimeout(()=>document.getElementById("setOverlay").classList.remove("show"),700);
 });
 
 /* ── 開機 ── */
 buildCats();
 buildGrid();
-if(isLocked()) showLock();
+if(inBedtime()) showBed();
+else if(isLocked()) showLock();
 </script>
 
 </body>
